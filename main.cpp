@@ -88,8 +88,21 @@ void Input()
 void Logic() 
 {
 	switch (dir) {
-	case UP:
+	case UP: y+=1;
+	case LEFT: x-=1;
+	case DOWN: y-=1;
+	case RIGHT: x+=1;
 	}
+	if (x==0||x==width) {
+	    gameOver = True;
+	} else if (y==0||y==height) { 
+	    gameOver = False;
+	}
+	if (x==fruitX&&y==fruitY)
+	    fruitX = rand() % width;
+	    fruitY = rand() % height;
+	    score+=1;
+	    
 }
 int main() 
 {
