@@ -4,12 +4,12 @@
 bool gameOver;
 const int width = 20;
 const int height = 20;
-int x, y, fruitX, fruitY, score;
+int x, y, fruitX, fruitY, score, bodyLength;
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN };
 eDirection dir;
 const int maxBody = (width - 1) * (height - 1);
-int bodyX[maxBody] = { NULL };
-int bodyY[maxBody] = { NULL };
+int bodyX[maxBody];
+int bodyY[maxBody];
 
 void Setup()
 {
@@ -19,6 +19,17 @@ void Setup()
 	dir = STOP;
 	x = width / 2;
 	y = height / 2;
+	bodyLength = 0;
+	for (int i = 0; i<maxBody;i++) {
+		if (i!=0) {
+			bodyX[i] = NULL;
+			bodyY[i] = NULL;
+		}
+		else {
+			bodyX[i] = x;
+			bodyY[i] = y;
+		}
+	}
 	fruitX = rand() % (width-1)+1;
 	fruitY = rand() % (height-1)+1;
 	score = 0;
@@ -90,13 +101,16 @@ void Input()
 }
 void UpdateBody() 
 {
+	// Update the position of each body to its predecessors 
+	// position creating a tail. Stopping the update process
+	// if we reach the end of the tail.
 	for (int i = 0; i < maxBody; i++) {
-		if (i == 0) {
-			bodyX[0] = x;
-			bodyY[0] = y;
-		}
-		else if (bodyX[i] == NULL) {
+		if (bodyX[i] == NULL) {
 			break;
+		}
+		else if (i == 0) {
+			bodyX[i] = x;
+			bodyY[i] = y;
 		}
 		else {
 			bodyX[i] = bodyX[i - 1];
@@ -109,28 +123,19 @@ void Logic()
 	switch (dir) 
 	{
 		case 3:
-			if (bodyX[0] != NULL) {
-				UpdateBody();
-			}
-			
+			UpdateBody();			
 			y -= 1;
 			break;
 		case 1:
-			if (bodyX[0] != NULL) {
-				UpdateBody();
-			}
+			UpdateBody();
 			x -= 1;
 			break;
 		case 4:
-			if (bodyX[0] != NULL) {
-				UpdateBody();
-			}
+			UpdateBody();
 			y += 1;
 			break;
 		case 2: 
-			if (bodyX[0] != NULL) {
-				UpdateBody();
-			}
+			UpdateBody();
 			x += 1;
 	}
 	if (x == 0 || x == width) {
@@ -143,7 +148,9 @@ void Logic()
 	{
 		fruitX = rand() % (width - 1) + 1;
 		fruitY = rand() % (height - 1) + 1;
-		UpdateBody();
+		bodyLength += 1;
+		bodyX[bodyLength] = bodyX[bodyLength-1];
+		bodyY[bodyLength] = bodyY[bodyLength-1];
 		score += 1;
 	}
 
